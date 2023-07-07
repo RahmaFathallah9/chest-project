@@ -1,5 +1,3 @@
-//import jwt_decode from "jwt-decode";
-
 var signUp = document.querySelector("#signUp");
 if (signUp != null) {
   document.querySelector("#signUp").addEventListener("submit", (e) => {
@@ -34,7 +32,30 @@ if (signUp != null) {
       } else if (data.message == "email exists") {
         window.location = "http://127.0.0.1:5500/signin.html";
       } else {
-        alert("error");
+        const style = document.createElement("style");
+
+        for (let error of data.errors) {
+          alert(error.msg + " in  " + error.path);
+          if (error.path == "password") {
+            style.innerHTML = `
+      #password {
+        color: red;
+        font-size: 24px;
+      }
+    `;
+            document.head.appendChild(style);
+          }
+          if (error.path == "confirmPassword") {
+            document.head.appendChild(style);
+            style.innerHTML = `
+      #confirmPassword {
+        color: red;
+        font-size: 24px;
+      }
+    `;
+            document.head.appendChild(style);
+          }
+        }
       }
     }
     post();
@@ -100,6 +121,14 @@ if (signin != null) {
         alert("email doesnt exist");
       } else if (data.message == " incorrect password ") {
         alert(" incorrect password");
+        const style = document.createElement("style");
+        style.innerHTML = `
+        #password {
+          color: red;
+          font-size: 24px;
+        }
+      `;
+        document.head.appendChild(style);
       } else {
         window.location = "http://127.0.0.1:5500/index.html";
       }
