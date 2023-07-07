@@ -1,0 +1,128 @@
+var docereeBaseUrl = "https://bidder.doceree.com";
+
+(function () {
+    if (typeof (hcpContext) != 'undefined') {
+        setDocereeContext(hcpContext);
+    }
+    initDoceree();
+})();
+
+function initDoceree() {
+    let platformUid = getPlatformUid()
+    if (platformUid) {
+        return;
+    }
+    try {
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    let responseJson = JSON.parse(xhttp.responseText);
+                    if (responseJson && responseJson.platformUid) {
+                        let cookieContent = { platformUid: responseJson.platformUid, version: responseJson.version };
+                        document.cookie = "_docereeId=" + JSON.stringify(cookieContent) + ';path=/;max-age=' + responseJson.maxAge;
+                    }
+                }
+            }
+        }
+        xhttp.withCredentials = true;
+        xhttp.crossDomain = true;
+        xhttp.open("GET", docereeBaseUrl + "/v1/doceree-init", true);
+        xhttp.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        xhttp.send();
+    } catch (err) {
+        if (err && err.message) {
+            let message = 'Error message ' + err.message + ', origin: ' + window.location.origin;
+            docereeLogMessage('https://programmatic.doceree.com', message);
+        }
+    }
+}
+
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+};
+
+function getPlatformUid() {
+    let docereeScriptVersion = '0.1';
+    let cookieContent = getCookie('_docereeId');
+    if (!!cookieContent) {
+        cookieContent = JSON.parse(cookieContent)
+        if (cookieContent.version == docereeScriptVersion) {
+            return cookieContent.platformUid;
+        }
+    }
+}
+
+function setDocereeContext(userObj) {
+    var cookieContext = {};
+    if (userObj['email'] !== undefined) {
+        cookieContext.email = userObj['email'];
+    }
+
+    if (userObj['firstName'] !== undefined) {
+        cookieContext.firstName = userObj['firstName'];
+    }
+
+    if (userObj['lastName'] !== undefined) {
+        cookieContext.lastName = userObj['lastName'];
+    }
+
+    if (userObj['specialization'] !== undefined) {
+        cookieContext.specialization = userObj['specialization'];
+    }
+
+    if (userObj['gender'] !== undefined) {
+        cookieContext.gender = userObj['gender'];
+    }
+
+    if (userObj['city'] !== undefined) {
+        cookieContext.city = userObj['city'];
+    }
+
+    if (userObj['state'] !== undefined) {
+        cookieContext.state = userObj['state'];
+    }
+
+    if (userObj['npi'] !== undefined) {
+        cookieContext.npi = userObj['npi'];
+    }
+
+    if (userObj['zipCode'] !== undefined) {
+        cookieContext.zipCode = userObj['zipCode'];
+    }
+
+    if (userObj['mciRegistrationNumber'] !== undefined) {
+        cookieContext.mciRegistrationNumber = userObj['mciRegistrationNumber'];
+    }
+
+    if (userObj['hashedNPI'] !== undefined) {
+        cookieContext.hashedNPI = userObj['hashedNPI'];
+    }
+
+    if (userObj['hashedEmail'] !== undefined) {
+        cookieContext.hashedEmail = userObj['hashedEmail'];
+    }
+
+    var encryptedHCP = btoa(encodeURIComponent(JSON.stringify(cookieContext)));
+    document.cookie = "_docereeContext=" + encryptedHCP + "; path=/";
+}
+
+function removeDocereeContext() {
+    document.cookie = '_docereeContext=; Max-Age=-99999999;';
+}
+
+function docereeLogMessage(baseUrl, message) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("POST", baseUrl + "/render/logMessage", true);
+    xhttp.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+    xhttp.send(JSON.stringify({
+        'message': message
+    }));
+};
