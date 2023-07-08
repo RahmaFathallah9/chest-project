@@ -67,6 +67,14 @@
 
           <li class="nav-item">
             <a class="nav-link" href="signup.html">Create New Account</a>
+          </li>
+          <li>
+            <img src="images/user.png"
+              style="text-decoration: none; transition: 0.8; margin-top: 50px; margin: left 20px;" width="50px"
+              height="800px" />
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="userEmail">userEmail</a>
 
           </li>
 
@@ -105,7 +113,18 @@
 
           <li class="nav-item">
             <a class="nav-link" href="signup.html">Creat New Account</a>
+
           </li>
+          <li>
+            <img src="images/user.png"
+              style="text-decoration: none; transition: 0.8; margin-top: 50px; margin: left 20px;" width="50px"
+              height="800px" />
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="userEmail">userEmail</a>
+
+          </li>
+
 
 
         </ul>
@@ -444,6 +463,10 @@
   <script src="js/owl.carousel.js"></script>
   <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
   <script src="Api.js"></script>
+  <script>
+    var userEmail = sessionStorage.getItem("userEmail");
+    document.getElementById("userEmail").innerHTML = userEmail;
+  </script>
 </body>
 
 </html>

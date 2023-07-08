@@ -116,6 +116,8 @@ if (signin != null) {
       const data = await response.json();
       console.log(data);
       sessionStorage.setItem("token", data.token);
+      var userEmail = document.getElementById("email").value;
+      sessionStorage.setItem("userEmail", userEmail);
 
       if (data.message == "email doesnt exist") {
         alert("email doesnt exist");
